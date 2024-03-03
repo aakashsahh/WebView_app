@@ -17,9 +17,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          //title: const Text("Koseli Express"),
-          ),
-      body: WebViewWidget(controller: controller),
+        elevation: 0,
+        backgroundColor: const Color.fromARGB(255, 255, 15, 107),
+        title: const Text("Welcome"),
+      ),
+      body: Center(child: WebViewWidget(controller: controller)),
     );
   }
 }
