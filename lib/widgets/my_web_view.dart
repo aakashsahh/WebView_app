@@ -66,16 +66,18 @@ class _MyWebViewState extends State<MyWebView> {
                 ),
             ],
           )
-        : const Column(
+        : Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(
-                Icons.signal_wifi_statusbar_connected_no_internet_4,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Center(
-                child: Text("No internet"),
+              Image.asset('assets/images/no_internet.png'),
+              const Center(
+                child: Text(
+                  "Oops!! No internet connection",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           );
