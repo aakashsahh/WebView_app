@@ -1,9 +1,29 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+class ConnectivityProvider extends ChangeNotifier {
+  late bool _isConnected;
+
+  bool get isConnected => _isConnected;
+
+  ConnectivityProvider() {
+    _isConnected = true; // Assume connected initially
+    Connectivity().onConnectivityChanged.listen((result) {
+      _isConnected = (result != ConnectivityResult.none);
+      notifyListeners();
+    });
+  }
+  Future<void> checkConnectivity() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    _isConnected = (connectivityResult != ConnectivityResult.none);
+    notifyListeners();
+  }
+}
+
 class MyWebView extends StatefulWidget {
-  MyWebView({Key? key, required this.controller}) : super(key: key);
+  const MyWebView({super.key, required this.controller});
   final WebViewController controller;
 
   @override
@@ -12,21 +32,14 @@ class MyWebView extends StatefulWidget {
 
 class _MyWebViewState extends State<MyWebView> {
   var loadingPercentage = 0;
-  bool isConnected = true;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    Connectivity().onConnectivityChanged.listen((result) {
-      setState(() {
-        isConnected = (result != ConnectivityResult.none);
-      });
-    });
-
     if (mounted) {
-      checkConnectivity();
+      Provider.of<ConnectivityProvider>(context, listen: false).checkConnectivity();
     }
 
     widget.controller
@@ -47,16 +60,17 @@ class _MyWebViewState extends State<MyWebView> {
       });
   }
 
-  Future<void> checkConnectivity() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
-    setState(() {
-      isConnected = (connectivityResult != ConnectivityResult.none);
-    });
-  }
+  // Future<void> checkConnectivity() async {
+  //   var connectivityResult = await Connectivity().checkConnectivity();
+  //   setState(() {
+  //     isConnected = (connectivityResult != ConnectivityResult.none);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return isConnected
+    final connectivityProvider = Provider.of<ConnectivityProvider>(context, listen: true);
+    return connectivityProvider.isConnected
         ? Stack(
             children: [
               WebViewWidget(controller: widget.controller),
